@@ -39,9 +39,6 @@
     <StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpcNetApi">
-      <HintPath>..\ext_packages\OpcNetApi.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -67,6 +64,18 @@
     <ProjectReference Include="..\h-opc\h-opc.csproj">
       <Project>{4f43b6f0-0c32-4c34-978e-9b8b5b0b6e80}</Project>
       <Name>h-opc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk-da\OpcComRcw\OpcComRcw.csproj">
+      <Project>{75a956d6-285b-46c9-b713-1500582f8c62}</Project>
+      <Name>OpcComRcw</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk-da\OpcNetApi.Com\OpcNetApi.Com.csproj">
+      <Project>{170a5455-a090-4f26-810f-15f71bbf87e6}</Project>
+      <Name>OpcNetApi.Com</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk-da\OpcNetApi\OpcNetApi.csproj">
+      <Project>{98b6e5a1-6fed-434e-b568-9c68d5f9959c}</Project>
+      <Name>OpcNetApi</Name>
     </ProjectReference>
     <ProjectReference Include="..\sdk\UA Client Library\UA Client Library.csproj">
       <Project>{42e9198c-ed2c-4bc8-b0a1-55d91d8f1e90}</Project>
