@@ -1,7 +1,9 @@
 ﻿using Hylasoft.Opc.Common;
 using Opc;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Factory = OpcCom.Factory;
@@ -200,6 +202,62 @@ namespace Hylasoft.Opc.Da
                 callback(monitorEvent, unsubscribe);
             };
             sub.AddItems(new[] { new OpcDa.Item { ItemName = tag } });
+            sub.SetEnabled(true);
+        }
+
+        /// <summary>
+        /// Monitor the specified tags for changes
+        /// </summary>
+        /// <param name="tags">The fully-qualified identifier of the tag. You can specify a subfolder by using a comma delimited name.
+        /// E.g: the tag `foo.bar` monitors the tag `bar` on the folder `foo`</param>
+        /// <param name="callback">the callback to execute when the value is changed.
+        /// The first parameter is the new values of the nodes, the second is an `unsubscribe` function to unsubscribe the callback</param>
+        public void Monitor(IEnumerable<string> tags, Action<IDictionary<string, ReadEvent>, Action> callback)
+        {
+            //Updated by Lee
+
+            #region # Check
+
+            tags = tags?.Distinct().ToArray() ?? new string[0];
+            if (!tags.Any())
+            {
+                throw new ArgumentNullException(nameof(tags), "tags cannot be empty !");
+            }
+
+            #endregion
+
+            OpcDa.SubscriptionState subItem = new OpcDa.SubscriptionState
+            {
+                Name = (++this._sub).ToString(CultureInfo.InvariantCulture),
+                Active = true,
+                UpdateRate = DefaultMonitorInterval
+            };
+            OpcDa.ISubscription sub = this._server.CreateSubscription(subItem);
+
+            // I have to start a new thread here because unsubscribing
+            // the subscription during a datachanged event causes a deadlock
+            Action unsubscribe = () => new Thread(o => this._server.CancelSubscription(sub)).Start();
+
+            sub.DataChanged += (handle, requestHandle, values) =>
+            {
+                IDictionary<string, ReadEvent> readEvents = new Dictionary<string, ReadEvent>();
+
+                foreach (OpcDa.ItemValueResult itemValueResult in values)
+                {
+                    ReadEvent monitorEvent = new ReadEvent();
+                    monitorEvent.Value = itemValueResult.Value;
+                    monitorEvent.SourceTimestamp = itemValueResult.Timestamp;
+                    monitorEvent.ServerTimestamp = itemValueResult.Timestamp;
+                    if (itemValueResult.Quality == OpcDa.Quality.Good) monitorEvent.Quality = Quality.Good;
+                    if (itemValueResult.Quality == OpcDa.Quality.Bad) monitorEvent.Quality = Quality.Bad;
+
+                    readEvents.Add(itemValueResult.ItemName.ToString(), monitorEvent);
+                }
+
+                callback(readEvents, unsubscribe);
+            };
+
+            sub.AddItems(tags.Select(tag => new OpcDa.Item { ItemName = tag }).ToArray());
             sub.SetEnabled(true);
         }
 

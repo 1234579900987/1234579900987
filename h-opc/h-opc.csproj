@@ -37,6 +37,9 @@
     <Reference Include="Opc.Ua.Client">
       <HintPath>..\ext_packages\Opc.Ua.Client.dll</HintPath>
     </Reference>
+    <Reference Include="Opc.Ua.Server">
+      <HintPath>..\ext_packages\Opc.Ua.Server.dll</HintPath>
+    </Reference>
     <Reference Include="Opc.Ua.Configuration">
       <HintPath>..\ext_packages\Opc.Ua.Configuration.dll</HintPath>
     </Reference>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Hylasoft.Opc.Common
@@ -53,6 +54,16 @@ namespace Hylasoft.Opc.Common
         /// The first parameter is the new value of the node, the second is an `unsubscribe` function to unsubscribe the callback</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "This is an async method.")]
         void Monitor<T>(string tag, Action<ReadEvent<T>, Action> callback);
+
+        /// <summary>
+        /// Monitor the specified tags for changes
+        /// </summary>
+        /// <param name="tags">The fully-qualified identifier of the tag. You can specify a subfolder by using a comma delimited name.
+        /// E.g: the tag `foo.bar` monitors the tag `bar` on the folder `foo`</param>
+        /// <param name="callback">the callback to execute when the value is changed.
+        /// The first parameter is the new values of the nodes, the second is an `unsubscribe` function to unsubscribe the callback</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "This is an async method.")]
+        void Monitor(IEnumerable<string> tags, Action<IDictionary<string, ReadEvent>, Action> callback);
 
         /// <summary>
         /// Read a tag asynchronusly

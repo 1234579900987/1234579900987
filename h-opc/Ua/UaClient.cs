@@ -3,6 +3,7 @@ using Opc.Ua;
 using Opc.Ua.Client;
 using Opc.Ua.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -383,6 +384,81 @@ namespace Hylasoft.Opc.Ua
                 if (StatusCode.IsBad(p.Value.StatusCode)) monitorEvent.Quality = Quality.Bad;
                 callback(monitorEvent, unsubscribe);
             };
+        }
+
+        /// <summary>
+        /// Monitor the specified tags for changes
+        /// </summary>
+        /// <param name="tags">The fully-qualified identifier of the tag. You can specify a subfolder by using a comma delimited name.
+        /// E.g: the tag `foo.bar` monitors the tag `bar` on the folder `foo`</param>
+        /// <param name="callback">the callback to execute when the value is changed.
+        /// The first parameter is the new values of the nodes, the second is an `unsubscribe` function to unsubscribe the callback</param>
+        public void Monitor(IEnumerable<string> tags, Action<IDictionary<string, ReadEvent>, Action> callback)
+        {
+            //Updated by Lee
+
+            #region # Check
+
+            tags = tags?.Distinct().ToArray() ?? new string[0];
+            if (!tags.Any())
+            {
+                throw new ArgumentNullException(nameof(tags), "tags cannot be empty !");
+            }
+
+            #endregion
+
+            Subscription sub = new Subscription
+            {
+                PublishingInterval = this._options.DefaultMonitorInterval,
+                PublishingEnabled = true,
+                LifetimeCount = this._options.SubscriptionLifetimeCount,
+                KeepAliveCount = this._options.SubscriptionKeepAliveCount,
+                DisplayName = string.Join(",", tags),
+                Priority = byte.MaxValue
+            };
+            Action unsubscribe = () =>
+            {
+                sub.RemoveItems(sub.MonitoredItems);
+                sub.Delete(true);
+                this._session.RemoveSubscription(sub);
+                sub.Dispose();
+            };
+
+            IDictionary<string, ReadEvent> readEvents = new Dictionary<string, ReadEvent>();
+            foreach (string tag in tags)
+            {
+                NodeId nodeId = new NodeId(tag);
+
+                MonitoredItem item = new MonitoredItem
+                {
+                    StartNodeId = nodeId,
+                    AttributeId = Attributes.Value,
+                    DisplayName = tag,
+                    SamplingInterval = this._options.DefaultMonitorInterval
+                };
+                sub.AddItem(item);
+
+
+                item.Notification += (monitoredItem, args) =>
+                {
+                    MonitoredItemNotification monitoredItemNotification = (MonitoredItemNotification)args.NotificationValue;
+
+                    ReadEvent monitorEvent = new ReadEvent();
+                    monitorEvent.Value = monitoredItemNotification.Value.WrappedValue.Value;
+                    monitorEvent.SourceTimestamp = monitoredItemNotification.Value.SourceTimestamp;
+                    monitorEvent.ServerTimestamp = monitoredItemNotification.Value.ServerTimestamp;
+                    if (StatusCode.IsGood(monitoredItemNotification.Value.StatusCode)) monitorEvent.Quality = Quality.Good;
+                    if (StatusCode.IsBad(monitoredItemNotification.Value.StatusCode)) monitorEvent.Quality = Quality.Bad;
+
+                    readEvents.Add(monitoredItem.StartNodeId.ToString(), monitorEvent);
+                };
+            }
+
+            this._session.AddSubscription(sub);
+            sub.Create();
+            sub.ApplyChanges();
+
+            callback(readEvents, unsubscribe);
         }
 
         /// <summary>
