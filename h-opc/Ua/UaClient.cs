@@ -424,7 +424,7 @@ namespace Hylasoft.Opc.Ua
                 sub.Dispose();
             };
 
-            IDictionary<string, ReadEvent> readEvents = new Dictionary<string, ReadEvent>();
+            IDictionary<string, ReadEvent> readEvents = tags.ToDictionary(x => x, x => new ReadEvent());
             foreach (string tag in tags)
             {
                 NodeId nodeId = new NodeId(tag);
@@ -438,7 +438,6 @@ namespace Hylasoft.Opc.Ua
                 };
                 sub.AddItem(item);
 
-
                 item.Notification += (monitoredItem, args) =>
                 {
                     MonitoredItemNotification monitoredItemNotification = (MonitoredItemNotification)args.NotificationValue;
@@ -450,15 +449,23 @@ namespace Hylasoft.Opc.Ua
                     if (StatusCode.IsGood(monitoredItemNotification.Value.StatusCode)) monitorEvent.Quality = Quality.Good;
                     if (StatusCode.IsBad(monitoredItemNotification.Value.StatusCode)) monitorEvent.Quality = Quality.Bad;
 
-                    readEvents.Add(monitoredItem.StartNodeId.ToString(), monitorEvent);
+                    string tagNo = monitoredItem.StartNodeId.ToString();
+                    if (readEvents.ContainsKey(tagNo))
+                    {
+                        readEvents[tagNo] = monitorEvent;
+                    }
+                    else
+                    {
+                        readEvents.Add(tagNo, monitorEvent);
+                    }
+
+                    callback(readEvents, unsubscribe);
                 };
             }
 
             this._session.AddSubscription(sub);
             sub.Create();
             sub.ApplyChanges();
-
-            callback(readEvents, unsubscribe);
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using Hylasoft.Opc.Common;
 using Opc;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -238,10 +239,10 @@ namespace Hylasoft.Opc.Da
             // the subscription during a datachanged event causes a deadlock
             Action unsubscribe = () => new Thread(o => this._server.CancelSubscription(sub)).Start();
 
+            IDictionary<string, ReadEvent> readEvents = new ConcurrentDictionary<string, ReadEvent>();
+
             sub.DataChanged += (handle, requestHandle, values) =>
             {
-                IDictionary<string, ReadEvent> readEvents = new Dictionary<string, ReadEvent>();
-
                 foreach (OpcDa.ItemValueResult itemValueResult in values)
                 {
                     ReadEvent monitorEvent = new ReadEvent();
@@ -251,7 +252,15 @@ namespace Hylasoft.Opc.Da
                     if (itemValueResult.Quality == OpcDa.Quality.Good) monitorEvent.Quality = Quality.Good;
                     if (itemValueResult.Quality == OpcDa.Quality.Bad) monitorEvent.Quality = Quality.Bad;
 
-                    readEvents.Add(itemValueResult.ItemName.ToString(), monitorEvent);
+                    string tag = itemValueResult.ItemName.ToString();
+                    if (readEvents.ContainsKey(tag))
+                    {
+                        readEvents[tag] = monitorEvent;
+                    }
+                    else
+                    {
+                        readEvents.Add(tag, monitorEvent);
+                    }
                 }
 
                 callback(readEvents, unsubscribe);
