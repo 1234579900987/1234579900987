@@ -19,6 +19,11 @@ namespace Hylasoft.Opc.CrontabExecutors
     public class PingCrontabExecutor : CrontabExecutor<PingCrontab>
     {
         /// <summary>
+        /// 同步锁
+        /// </summary>
+        private static readonly object _Sync = new object();
+
+        /// <summary>
         /// 执行任务
         /// </summary>
         /// <param name="crontab">定时任务</param>
@@ -50,62 +55,65 @@ namespace Hylasoft.Opc.CrontabExecutors
         /// </summary>
         private ConnectionStatus Connect(string url)
         {
-            //判断可用的客户端是否已存在
-            if (Global.Clients.ContainsKey(url) && Global.Clients[url].Status == OpcStatus.Connected)
+            lock (_Sync)
             {
-                //已连接
-                return ConnectionStatus.Connected;
-            }
-
-            OpcMode opcMode = Constants.AdapteeServerAddresses[url];
-            Uri uri = new Uri(url);
-
-            IOpcClient opcClient;
-            if (opcMode == OpcMode.UA)
-            {
-                opcClient = new UaClient(uri);
-            }
-            else if (opcMode == OpcMode.DA)
-            {
-                opcClient = new DaClient(uri);
-            }
-            else
-            {
-                throw new NotImplementedException("未知OPC模式");
-            }
-
-            try
-            {
-                bool succeed = Task.Run(() =>
+                //判断可用的客户端是否已存在
+                if (Global.Clients.ContainsKey(url) && Global.Clients[url].Status == OpcStatus.Connected)
                 {
-                    opcClient.Connect();
-
-                    if (Global.Clients.ContainsKey(url))
-                    {
-                        Global.Clients[url].Dispose();
-                        Global.Clients[url] = opcClient;
-                    }
-                    else
-                    {
-                        Global.Clients.Add(url, opcClient);
-                    }
-                }).Wait(new TimeSpan(0, 0, 0, 5));
-
-                if (succeed)
-                {
-                    //连接成功
-                    return ConnectionStatus.Success;
+                    //已连接
+                    return ConnectionStatus.Connected;
                 }
 
-                throw new TimeoutException($"连接服务器\"{url}\"超时！");
-            }
-            catch
-            {
-                //暂停巡检
-                ScheduleMediator.Pause(url + typeof(PatrolCrontab).Name);
+                OpcMode opcMode = Constants.AdapteeServerAddresses[url];
+                Uri uri = new Uri(url);
 
-                //连接失败
-                return ConnectionStatus.Failed;
+                IOpcClient opcClient;
+                if (opcMode == OpcMode.UA)
+                {
+                    opcClient = new UaClient(uri);
+                }
+                else if (opcMode == OpcMode.DA)
+                {
+                    opcClient = new DaClient(uri);
+                }
+                else
+                {
+                    throw new NotImplementedException("未知OPC模式");
+                }
+
+                try
+                {
+                    bool succeed = Task.Run(() =>
+                    {
+                        opcClient.Connect();
+
+                        if (Global.Clients.ContainsKey(url))
+                        {
+                            Global.Clients[url].Dispose();
+                            Global.Clients[url] = opcClient;
+                        }
+                        else
+                        {
+                            Global.Clients.Add(url, opcClient);
+                        }
+                    }).Wait(new TimeSpan(0, 0, 0, 5));
+
+                    if (succeed)
+                    {
+                        //连接成功
+                        return ConnectionStatus.Success;
+                    }
+
+                    throw new TimeoutException($"连接服务器\"{url}\"超时！");
+                }
+                catch
+                {
+                    //暂停巡检
+                    ScheduleMediator.Pause(url + typeof(PatrolCrontab).Name);
+
+                    //连接失败
+                    return ConnectionStatus.Failed;
+                }
             }
         }
     }
