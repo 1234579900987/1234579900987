@@ -88,20 +88,15 @@ namespace Hylasoft.Opc.Da
                 return;
             this._server = new OpcDa.Server(new Factory(), this._url);
             this._server.Connect();
+
+            this.Status = OpcStatus.Connected;
         }
 
         /// <summary>
         /// Gets the current status of the OPC Client
         /// </summary>
-        public OpcStatus Status
-        {
-            get
-            {
-                if (this._server == null || this._server.GetStatus().ServerState != OpcDa.serverState.running)
-                    return OpcStatus.NotConnected;
-                return OpcStatus.Connected;
-            }
-        }
+        public OpcStatus Status { get; private set; }
+
 
         /// <summary>
         /// Read a tag
@@ -229,7 +224,9 @@ namespace Hylasoft.Opc.Da
         /// </summary>
         public void Dispose()
         {
-            if (this._server != null) this._server.Dispose();
+            this._server?.Dispose();
+            this.Status = OpcStatus.NotConnected;
+
             GC.SuppressFinalize(this);
         }
 

@@ -395,6 +395,7 @@ namespace Hylasoft.Opc.Ua
                 this._session.RemoveSubscriptions(this._session.Subscriptions.ToList());
                 this._session.Close();
                 this._session.Dispose();
+                this.Status = OpcStatus.NotConnected;
             }
             GC.SuppressFinalize(this);
         }
