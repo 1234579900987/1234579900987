@@ -12,7 +12,7 @@ namespace Hylasoft.Opc.Da
     /// <summary>
     /// Client Implementation for DA
     /// </summary>
-    public class DaClient : IClient
+    public class DaClient : IOpcClient
     {
         private readonly URL _url;
         private OpcDa.Server _server;

@@ -6,7 +6,7 @@ namespace Hylasoft.Opc.Common
     /// <summary>
     /// OPC客户端接口
     /// </summary>
-    public interface IClient : IDisposable
+    public interface IOpcClient : IDisposable
     {
         /// <summary>
         /// Connect the client to the OPC Server

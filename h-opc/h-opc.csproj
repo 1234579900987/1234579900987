@@ -22,7 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>..\rules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Debug\h-opc.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\h-opc.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,7 +31,7 @@
     <DefineConstants>TRACE;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\h-opc.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\h-opc.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Opc.Ua.Client">
@@ -64,7 +64,7 @@
     <Compile Include="Common\ClientExtensions.cs" />
     <Compile Include="Common\ReadEvent.cs" />
     <Compile Include="Common\Node.cs" />
-    <Compile Include="Common\IClient.cs" />
+    <Compile Include="Common\IOpcClient.cs" />
     <Compile Include="Common\OpcException.cs" />
     <Compile Include="Common\OpcStatus.cs" />
     <Compile Include="Common\Quality.cs" />

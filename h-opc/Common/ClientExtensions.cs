@@ -14,7 +14,7 @@ namespace Hylasoft.Opc.Common
         /// <param name="tag">The fully qualified identifier of the tag</param>
         /// <param name="defaultValue">the default value to read if the read fails</param>
         /// <returns></returns>
-        public static ReadEvent<T> ReadOrdefault<T>(this IClient client, string tag, T defaultValue = default(T))
+        public static ReadEvent<T> ReadOrdefault<T>(this IOpcClient client, string tag, T defaultValue = default(T))
         {
             try
             {

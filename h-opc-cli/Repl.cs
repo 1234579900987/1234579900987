@@ -7,11 +7,11 @@ namespace Hylasoft.Opc.Cli
 {
     internal class Repl
     {
-        private readonly IClient _client;
+        private readonly IOpcClient _client;
         private Node _currentNode;
         private bool _keepAlive = true;
 
-        public Repl(IClient client)
+        public Repl(IOpcClient client)
         {
             _client = client;
         }

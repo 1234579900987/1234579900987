@@ -13,7 +13,7 @@ namespace Hylasoft.Opc.Ua
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling",
       Justification = "Doesn't make sense to split this class")]
-    public class UaClient : IClient
+    public class UaClient : IOpcClient
     {
         private readonly UaClientOptions _options = new UaClientOptions();
         private readonly Uri _serverUrl;
