@@ -37,13 +37,6 @@ namespace Hylasoft.Opc.Tests
     }
 
     [Test]
-    public void FindNodeTest()
-    {
-      var node = _client.FindNode("Data.Dynamic.Scalar.SByteValue");
-      Assert.NotNull(node);
-    }
-
-    [Test]
     public void ReadNodeTest()
     {
       var val = _client.Read<string>("Server.ServerStatus.BuildInfo.ManufacturerName");
@@ -110,15 +103,6 @@ namespace Hylasoft.Opc.Tests
 
       // fails for not readable tag
       Assert.AreEqual(Quality.Bad, _client.Read<string>("Server").Quality);
-    }
-
-    [Test]
-    public void BrowseFolderTest()
-    {
-      var node = _client.FindNode("Server.ServerStatus.BuildInfo");
-
-      var subNodes = _client.ExploreFolder(node.Tag);
-      Assert.AreEqual(6, subNodes.Count());
     }
 
     [Test]
@@ -255,20 +239,7 @@ namespace Hylasoft.Opc.Tests
       val = _client.Read<byte>(tag);
       Assert.AreEqual(13, val.Value);
     }
-    [Test]
-    public void DisposeWithoutException()
-    {
-      var nodes = _client.ExploreFolder("Data");
-      foreach (var node in nodes)
-      {
-        _client.Monitor<object>(node.Tag, (value, unsubscribe) =>
-        {
-          Console.WriteLine("{0}:={1}", node.Name, value);
-        });
-      }
-      Thread.Sleep(500);
-      _client.Dispose();
-    }
+
     [Test]
     public void UaGetDataType()
     {

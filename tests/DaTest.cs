@@ -35,12 +35,6 @@ namespace Hylasoft.Opc.Tests
       Assert.AreEqual(OpcStatus.Connected, _client.Status);
     }
     [Test]
-    public void FindNodeTest()
-    {
-      var node = _client.FindNode(TestRegister);
-      Assert.NotNull(node);
-    }
-    [Test]
     public void DaReadDouble()
     {
       var val = _client.Read<double>(TestRegister);
@@ -103,12 +97,6 @@ namespace Hylasoft.Opc.Tests
       _client.Write(tag, 13);
       Thread.Sleep(interval);
       Assert.AreEqual(3, executed);
-    }
-    [Test]
-    public void DaExploreFolder()
-    {
-      var rootTags = _client.ExploreFolder(string.Empty);
-      Assert.Greater(rootTags.Count(), 0);
     }
     [Test]
     public void DaGetDataType()

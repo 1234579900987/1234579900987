@@ -48,7 +48,7 @@ namespace Hylasoft.Opc.Cli
         Console.WriteLine("Supported types: " + GetSupportedTypes());
         return;
       }
-      IClient<Node> client;
+      IClient client;
       try
       {
         client = GetClient(args[1], type);
@@ -76,7 +76,7 @@ namespace Hylasoft.Opc.Cli
       return string.Join(", ", Enum.GetNames(typeof(SupportedTypes)));
     }
 
-    private static IClient<Node> GetClient(string url, SupportedTypes type)
+    private static IClient GetClient(string url, SupportedTypes type)
     {
       switch (type)
       {
