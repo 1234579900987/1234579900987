@@ -68,6 +68,22 @@
       <Project>{4f43b6f0-0c32-4c34-978e-9b8b5b0b6e80}</Project>
       <Name>h-opc</Name>
     </ProjectReference>
+    <ProjectReference Include="..\sdk\UA Client Library\UA Client Library.csproj">
+      <Project>{42e9198c-ed2c-4bc8-b0a1-55d91d8f1e90}</Project>
+      <Name>UA Client Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk\UA Configuration Library\UA Configuration Library.csproj">
+      <Project>{8ab4cb8e-e216-425d-b600-350d0b6b59cd}</Project>
+      <Name>UA Configuration Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk\UA Core Library\UA Core Library.csproj">
+      <Project>{7543afcb-f5af-44af-83c9-23164474c1e9}</Project>
+      <Name>UA Core Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk\UA Server Library\UA Server Library.csproj">
+      <Project>{e16f908b-c338-4b0c-9e72-2adad8fb98d5}</Project>
+      <Name>UA Server Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -34,27 +34,6 @@
     <DocumentationFile>bin\Release\h-opc.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Opc.Ua.Client">
-      <HintPath>..\ext_packages\Opc.Ua.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Opc.Ua.Configuration">
-      <HintPath>..\ext_packages\Opc.Ua.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Opc.Ua.Core">
-      <HintPath>..\ext_packages\Opc.Ua.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Opc.Ua.Server">
-      <HintPath>..\ext_packages\Opc.Ua.Server.dll</HintPath>
-    </Reference>
-    <Reference Include="OpcComRcw">
-      <HintPath>..\ext_packages\OpcComRcw.dll</HintPath>
-    </Reference>
-    <Reference Include="OpcNetApi">
-      <HintPath>..\ext_packages\OpcNetApi.dll</HintPath>
-    </Reference>
-    <Reference Include="OpcNetApi.Com">
-      <HintPath>..\ext_packages\OpcNetApi.Com.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -76,6 +55,36 @@
     <Compile Include="Ua\UaClientOptions.cs" />
     <Compile Include="Ua\UaClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\sdk-da\OpcComRcw\OpcComRcw.csproj">
+      <Project>{75a956d6-285b-46c9-b713-1500582f8c62}</Project>
+      <Name>OpcComRcw</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk-da\OpcNetApi.Com\OpcNetApi.Com.csproj">
+      <Project>{170a5455-a090-4f26-810f-15f71bbf87e6}</Project>
+      <Name>OpcNetApi.Com</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk-da\OpcNetApi\OpcNetApi.csproj">
+      <Project>{98b6e5a1-6fed-434e-b568-9c68d5f9959c}</Project>
+      <Name>OpcNetApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk-ua\UA Client Library\UA Client Library.csproj">
+      <Project>{42e9198c-ed2c-4bc8-b0a1-55d91d8f1e90}</Project>
+      <Name>UA Client Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk-ua\UA Configuration Library\UA Configuration Library.csproj">
+      <Project>{8ab4cb8e-e216-425d-b600-350d0b6b59cd}</Project>
+      <Name>UA Configuration Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk-ua\UA Core Library\UA Core Library.csproj">
+      <Project>{7543afcb-f5af-44af-83c9-23164474c1e9}</Project>
+      <Name>UA Core Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdk-ua\UA Server Library\UA Server Library.csproj">
+      <Project>{e16f908b-c338-4b0c-9e72-2adad8fb98d5}</Project>
+      <Name>UA Server Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
